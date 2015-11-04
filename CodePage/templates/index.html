@@ -1,0 +1,197 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="description" content="Hackerearth Task to imitate CODEPAGE">
+
+        {% load staticfiles %}
+
+       	<title>Sample CodePage</title>
+
+       	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+       	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+       	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}">
+
+        <!--<script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+        <script>tinymce.init({selector:'textarea'});</script>
+    -->
+
+       	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="js/bootstrap.js"></script>
+		
+        <style>
+            .float-left:{
+              float: left;
+              margin-left: auto;
+              margin-right: auto;
+            }
+
+            .float-right:{
+              float: right;
+              margin-left: auto;
+              margin-right: auto;
+            }
+            .save-code:{
+                background-color: #428bca;
+            }
+
+        </style>        
+		<script>
+		$(document).ready(function(){
+            var x = document.getElementById("file-name").value;
+            $('#input_name').val(x);
+		   
+		    $("#file-name").click(function(){
+		        $("#filename-text").show();
+
+		    });
+		    $("#filename-cancel").click(function(){
+		        $("#filename-text").hide();
+                var x = document.getElementById("file-name").value;
+                $('#input_name').val(x);
+
+		    });
+             $("#update-name").click(function(){
+                $("#filename-text").hide();
+                var x = document.getElementById("input_name").value;
+                document.getElementById("file-name").innerHTML = x;
+
+            });
+             $('#code-section').submit(function() { // catch the form's submit event
+                $.ajax({ // create an AJAX call...
+                    data: $(this).serialize(), // get the form data
+                    type: $(this).attr('method'), // GET or POST
+                    url: $(this).attr('action'), // the file to call
+                    success: function(response) { // on success..
+                        // $('#success_div).html(response); // update the DIV
+                        result = JSON.parse(response); 
+                        if (result.error)
+                        { 
+                            alert(result.error_text);
+                        }
+                        else
+                        {  
+                                print "yes"
+                                document.getElementById("output").innerHTML = data;
+                                $("#output").show();
+                                                                             
+                        } 
+                    },
+                    error: function(e, x, r) { // on error..
+                        // $('#error_div').html(e); // update the DIV
+
+                    }
+                });
+                return false;
+            });
+            
+		});
+		</script>
+        <script> {% csrf_token %}}
+            function form_post(){       
+                var datastring = $form.serialize();
+
+                $.ajax({  
+                  url: "/update-content/",  
+                  type: 'POST',
+                  data: datastring,
+                    success: function(response) {
+                        result = JSON.parse(response); 
+                        if (result.error) { 
+                            
+                            alert(result.error_text);
+                        } else {  // Success
+                                print "yes"
+                                //Here do whatever you need with the result;                                                  
+                            } 
+                        }
+                    }
+                });              
+            }
+        </script>
+        
+<link rel="stylesheet" href="https://hackerearth.global.ssl.fastly.net/static/codetable/base_codetable.css?v=0.1">
+
+    </head>
+    <body>
+    	
+    	<div class="navbar navbar-inverse navbar-static-top">
+        	<div class="container">
+            	<a href="#" class="navbar-brand">Code Page</a>
+                
+                <button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <!--List in the collapsable/dropdown bar-->
+                <div class="collapse navbar-collapse navHeaderCollapse">
+                	<ul class="nav navbar-nav navbar-right">
+                    	<li><a href="#">New Code</a></li>
+                        <li><a href="https://github.com/HackerEarth/hackerearth.vim" target="_blank">Vim Plugin</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container" >
+        	<div id="filename">
+        	   
+               <div>
+        		<a><div id="file-name" class="filename float-left" title="Click to rename">Untitled Page
+        		</div></a>
+                <div>
+		        
+			        <div id="filename-text" class="filename-text" style="display:none">
+			            <form> {% csrf_token %}}
+			                <div class="floating-wrapper">
+			                    <input type="text" name="filename" id="input_name" value=""/>
+			                    <button id = "update-name" type="button" class="btn-primary" onclick="update-filename()">Save</button>
+			                    <a id="filename-cancel" >Cancel</a>
+			                </div>
+			            </form>
+			        </div>
+
+        	</div>
+            <hr class="hr">
+            <div id="code_area" style="width:80%; float:left" class="jumbotron">
+            	{% block content %}   
+                {% load wysiwyg %}
+                {% wysiwyg_setup %}           
+                    <form method="POST" class="code-form" id="code-section">{% csrf_token %}
+                        
+                        <div style="width:20%;float:left">
+                                    {{ form.lang }}
+                        </div>
+                        <div style="float:right;width:10%;" class="float-left save-code" id="save-code" onclick="save('0c7a8ep');return false;">Save
+                        </div>
+                        <br>
+                        <br>
+                        <div id="user_code" style="float:left;width:100%" class="editor">
+                            
+                            {{ form.code }}
+                        
+                        
+                        <br>
+                        <br>
+                        <div>
+                            <button type="submit" class="save btn btn-success">Compile and Run</button>
+                        </div>
+                        </div>
+                        </form>
+                        {% wysiwyg_editor "code" %}
+                    {% endblock %}
+                    <div id="output" style="display:none">
+
+                    </div>
+            </div>
+            <div id="details" style="float:right;width:20%">
+                <center>
+                    <b>Activity Status</b>
+                    <hr class="hr">
+                    Run Count: {{ run_count}}
+                </center>
+        </div>
+        
+    </body>
+</html>
