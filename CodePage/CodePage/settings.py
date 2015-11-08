@@ -10,6 +10,11 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.conf import global_settings
+
+TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
+)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -36,8 +41,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'CodePage',
+    'front',
     'django_wysiwyg',
     'ckeditor',
+    'south',
+    'django_ace',
 )
 
 MIDDLEWARE_CLASSES = (

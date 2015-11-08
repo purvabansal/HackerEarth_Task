@@ -1,0 +1,20 @@
+.page-header{
+	margin-top: 0;
+}
+
+.page-body{
+	padding-top: 0;
+}
+
+.img-responsive{
+	margin-bottom: 15px;
+}
+
+body{
+	margin-bottom: 80px;
+}
+
+#myCarousel{
+	max-width: 800px;
+}
+

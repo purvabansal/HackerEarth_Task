@@ -10,15 +10,18 @@
        	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
        	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
        	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}">
-
-        <!--<script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
-        <script>tinymce.init({selector:'textarea'});</script>
-    -->
-
        	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="js/bootstrap.js"></script>
+        <script src="{% static 'js/bootstrap.js' %}"></script>
 		
         <style>
+
+            #editor {
+              
+              height: 50cm; 
+              border: 0px solid #444;
+              overflow: hidden;
+            }
+ 
             .float-left:{
               float: left;
               margin-left: auto;
@@ -33,30 +36,45 @@
             .save-code:{
                 background-color: #428bca;
             }
+           
 
-        </style>        
+        </style>   
+
 		<script>
 		$(document).ready(function(){
-            var x = document.getElementById("file-name").value;
-            $('#input_name').val(x);
-		   
-		    $("#file-name").click(function(){
-		        $("#filename-text").show();
 
-		    });
-		    $("#filename-cancel").click(function(){
-		        $("#filename-text").hide();
-                var x = document.getElementById("file-name").value;
-                $('#input_name').val(x);
+            alert('rt');
+            function displayInput()
+            {
+                $("#inputEnter").show();
+                return false;
+            }
+           
+         
+            function form_post(){       
+                var datastring = $form.serialize();
 
-		    });
-             $("#update-name").click(function(){
-                $("#filename-text").hide();
-                var x = document.getElementById("input_name").value;
-                document.getElementById("file-name").innerHTML = x;
-
-            });
-             $('#code-section').submit(function() { // catch the form's submit event
+                $.ajax({  
+                  url: "/update-content/",  
+                  type: 'POST',
+                  data: datastring,
+                    success: function(response) {
+                        result = JSON.parse(response); 
+                        if (result.error) { 
+                            
+                            alert(result.error_text);
+                        } else {  // Success
+                                print "yes"
+                                //Here do whatever you need with the result;                                                  
+                            } 
+                        }
+                    }
+                });              
+            }
+        });
+        </script>
+        <script >
+            $('#code-section').submit(function() { // catch the form's submit event
                 $.ajax({ // create an AJAX call...
                     data: $(this).serialize(), // get the form data
                     type: $(this).attr('method'), // GET or POST
@@ -83,37 +101,15 @@
                 });
                 return false;
             });
-            
-		});
-		</script>
-        <script> {% csrf_token %}}
-            function form_post(){       
-                var datastring = $form.serialize();
-
-                $.ajax({  
-                  url: "/update-content/",  
-                  type: 'POST',
-                  data: datastring,
-                    success: function(response) {
-                        result = JSON.parse(response); 
-                        if (result.error) { 
-                            
-                            alert(result.error_text);
-                        } else {  // Success
-                                print "yes"
-                                //Here do whatever you need with the result;                                                  
-                            } 
-                        }
-                    }
-                });              
-            }
         </script>
-        
-<link rel="stylesheet" href="https://hackerearth.global.ssl.fastly.net/static/codetable/base_codetable.css?v=0.1">
-
+    
     </head>
+
     <body>
-    	
+
+    	{% load front_tags %}
+
+        <!-- header-->
     	<div class="navbar navbar-inverse navbar-static-top">
         	<div class="container">
             	<a href="#" class="navbar-brand">Code Page</a>
@@ -123,7 +119,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <!--List in the collapsable/dropdown bar-->
+                
                 <div class="collapse navbar-collapse navHeaderCollapse">
                 	<ul class="nav navbar-nav navbar-right">
                     	<li><a href="#">New Code</a></li>
@@ -133,65 +129,175 @@
             </div>
         </div>
 
-
+        <!-- Page content -->
         <div class="container" >
-        	<div id="filename">
+            <!-- FileName area -->
+
+        	<div>
         	   
                <div>
-        		<a><div id="file-name" class="filename float-left" title="Click to rename">Untitled Page
-        		</div></a>
-                <div>
+
+        		<a class='file-name' id='file-name' onclick=" $('#filename-text').show();var x = document.getElementById('file-name').value;
+                        $('#input_name').val(x);">
+                    <!-- return name-change();return false; -->
+                    <div class="float-left" title="Click to rename">
+                        Untitled Page
+        		    </div>
+                </a>
+
+                </div>
 		        
-			        <div id="filename-text" class="filename-text" style="display:none">
-			            <form> {% csrf_token %}}
-			                <div class="floating-wrapper">
+                
+			    <div id="filename-text" class="filename-text" style="display:none">
+                    <form> {% csrf_token %}
+
+                        
+                        <div class="floating-wrapper">
+
 			                    <input type="text" name="filename" id="input_name" value=""/>
-			                    <button id = "update-name" type="button" class="btn-primary" onclick="update-filename()">Save</button>
-			                    <a id="filename-cancel" >Cancel</a>
-			                </div>
-			            </form>
-			        </div>
+			                    <button id = "update-name" type="button" class="btn-primary" onclick="fn2()">Save</button>
+                                
+			                    <a id="filename-cancel" onclick="fn()" >
+                                    Cancel
+                                </a>
+
+			             </div>
+
+                         <script>
+                            function fn2()
+                            {
+                                $('#filename-text').hide();
+                                        var x = document.getElementById('input_name').value;if(x==''){alert('enter some value');}else
+                                        {document.getElementById('file-name').innerHTML = x;}
+                            }
+                            function fn()
+                            {
+                                $('#filename-text').hide();
+                                var x = document.getElementById('file-name').value;
+                                $('#input_name').val(x);
+                            }
+                        </script>
+
+			         </form>
+			     </div>
+                
 
         	</div>
+
+
             <hr class="hr">
+            
+            <!-- Coding, language, save area -->
             <div id="code_area" style="width:80%; float:left" class="jumbotron">
+
             	{% block content %}   
                 {% load wysiwyg %}
-                {% wysiwyg_setup %}           
-                    <form method="POST" class="code-form" id="code-section">{% csrf_token %}
-                        
-                        <div style="width:20%;float:left">
-                                    {{ form.lang }}
+                {% wysiwyg_setup %}  
+
+                <form method="POST" class="code-form" id="code-section">{% csrf_token %}
+                        <!-- choose language -->
+                    <div style="width:20%;float:left">
+                        {{ form.lang }}
+                    </div>
+
+                        <!-- save the code -->
+                    <div style="float:right;width:10%;background-color:green" class="float-left " onclick="save('0c7a8ep');return false;">
+                        <div style="background-color:green" id="save-code">
+                            <center>
+                                <font style="color:white">Save</font>
+                            </center>
                         </div>
-                        <div style="float:right;width:10%;" class="float-left save-code" id="save-code" onclick="save('0c7a8ep');return false;">Save
-                        </div>
-                        <br>
-                        <br>
-                        <div id="user_code" style="float:left;width:100%" class="editor">
-                            
+                    </div>
+
+                    <br>
+                    <br>
+                    
+                    <!-- code editor -->
+                    <div id="editor" style="float:left;width:100%;height:400px;background-color:white">
+
+                        <div style="float:left;width:100%;height:400px;background-color:white" id="code">
                             {{ form.code }}
-                        
-                        
-                        <br>
-                        <br>
-                        <div>
-                            <button type="submit" class="save btn btn-success">Compile and Run</button>
                         </div>
-                        </div>
-                        </form>
-                        {% wysiwyg_editor "code" %}
-                    {% endblock %}
-                    <div id="output" style="display:none">
 
                     </div>
+                        
+                    <br>
+                    <br>
+                    <br>
+                    
+                    <div id ="enterInput" onclick="return displayInput();return false;"  >
+                        <input type="checkbox" name="input-yes" value="yes" onclick="fn3(); " > Standard Input
+                    </div>
+                    <br>
+                    <br>
+                    <script type="text/javascript">
+                        function fn3()
+                        {
+                            $('#inputEnter').toggle();
+                        }
+                        
+                    </script>
+                    <div id="inputEnter" style="display:none">
+                        <textarea id="input" class="form-control">
+
+                        </textarea>
+                    </div>
+                    <br>
+                    <br>
+                    <!-- compile and run the code -->
+                    <button type="submit" class="save btn btn-success" style="float:right">Compile and Run</button>
+                        
+                </form>
+
+                <!-- {% wysiwyg_editor "code" %} -->
+                     
+                {% endblock %}
             </div>
             <div id="details" style="float:right;width:20%">
                 <center>
-                    <b>Activity Status</b>
-                    <hr class="hr">
-                    Run Count: {{ run_count}}
+                     <b>Activity Status</b>
+                     <hr class="hr">
+                      Run Count: {{ run_count}}
                 </center>
+            </div>
+
+            
+
+            <div id="output" style="float:left;width:80%">
+                <b>
+                   <font style="color:black">
+                        Output
+                    </font>
+                </b>
+                <hr>
+                output
+                <br>
+                <br>
+                <b>
+                    <font style="color:black">
+                        Input
+                    </font>
+                </b>
+            </div>
         </div>
-        
+            
+
+  
+
+        <script src="{% static 'ace-builds-master/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+        <!-- Ace Editor is loaded because of this-->
+        <script>
+            var editor = ace.edit("code");
+            editor.setTheme("ace/theme/default");
+            editor.session.setMode("ace/mode/python");
+            editor.setOptions({
+                maxLines: 30
+            
+            });
+
+        </script>
+
+        {% front_edit_scripts %}
+
     </body>
 </html>

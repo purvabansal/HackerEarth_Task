@@ -3,44 +3,103 @@ from django.shortcuts import render, render_to_response
 from django.template import Context, loader
 import json
 import requests
-from forms import CodeForm, Code 
-
+from forms import CodeForm, Code
+from django_ace import AceWidget
+from datetime import datetime
 
 
 def index(request):
 	form = CodeForm(initial={'LANG_CHOICES': 'C'})
-	if request.method=='POST':
-		RUN_URL = u'https://api.hackerearth.com/v3/code/compile/'
-		CLIENT_SECRET = 'c8b23f340cc542d38f1786ee3d2180254e75a0f5'
+	form['code'].widget=AceWidget(mode='C')
+	run_count=0
+	id_code=1
+	source="hi"
+	lang="C"
+	time = datetime.now()
+	if len(request.POST)==0:
+		return render(request,'temp.html', {'form':form,'run_count':run_count})
+	else:
 
-		source = request.POST['code']
+		form = CodeForm(request.POST)
 
-		data = {
-		    'client_secret': CLIENT_SECRET,
-		    'async': 0,
-		    'source': source,
-		    'lang': request.POST['lang'],
-		    'time_limit': 5,
-		    'memory_limit': 262144,
-		}
+		if form.is_valid():
 
-		r = requests.post(RUN_URL, data=data)
-		temp =  r.json()
-		run_count = 0
-		# temp1 = json.loads(temp)
-		# print temp1['errors']
-		# for i in temp1['errors']:
-		# 	if i=='':
-		# 		run_count = 1
-		print temp['compile_status']
-		if temp['compile_status']=='OK':
-			RUN_URL = u'https://api.hackerearth.com/v3/code/run/'
-			r = requests.post(RUN_URL, data=data)
-			temp1 = r.json()
-		# return render(request,'index.html', {'form':form,'run_count':run_count,})
-			return HttpResponse(temp1, content_type="application/json")
-		return HttpResponse(temp, content_type="application/json")
-	return render(request,'index.html', {'form':form,'run_count':0})
+				source = request.POST['code']
+				lang = request.POST['lang']
+				time = datetime.now()
+				print "yoyooyoy"
+				print request.POST['code']
+				print "dsfdsfgd"
+				instance1, instance2 = Code.objects.get_or_create(id1=id_code)
+	        	
+				if instance2:
+					instance2.code = source
+					instance2.lang = lang
+					instance2.last_run_date = time
+					instance1.run_count=1
+					run_count=1
+					instance2.save()
+				else:
+					instance1.code = source
+		    		instance1.lang = lang
+		    		instance1.last_run_date = time
+		    		instance1.run_count = instance1.run_count+1
+		    		run_count=instance1.run_count
+		    		instance1.save()
+	        	
+				COMPILE_URL = u'https://api.hackerearth.com/v3/code/compile/'
+				RUN_URL = 'https://api.hackerearth.com/v3/code/run/'
+				CLIENT_SECRET = 'c8b23f340cc542d38f1786ee3d2180254e75a0f5'
+
+			
+				data = {
+				    'client_secret': CLIENT_SECRET,
+				    'async': 0,
+				    'source': source,
+				    'lang': lang,
+				    'time_limit': 5,
+				    'memory_limit': 262144,
+				}
+
+				r = requests.post(COMPILE_URL, data=data)
+				temp =  r.json()
+
+				compile_status = temp['compile_status']
+
+				print temp
+
+				print compile_status
+
+				print source
+
+				print lang
+				if lang != 'PYTHON' :
+					print "hehe"
+					if compile_status == 'OK':
+						r = requests.post(RUN_URL, data=data)
+						temp1 = r.json()
+						print temp1
+						errors = temp1["errors"]
+						if not errors:
+							return HttpResponse("compiled ad runned successfully %s"%(temp1))
+						else:
+							return HttpResponse("errors %s"%(errors))
+						return HttpResponse(simplejson.dumps(temp1))
+
+					else:
+						return HttpResponse("compile error %s"%(compile_status))
+				else:
+					print "yoyo"
+					r = requests.post(RUN_URL, data=data)
+					temp1 = r.json()
+					errors = temp1["compile_status"]
+					if compile_status == 'OK':
+						return HttpResponse(simplejson.dumps(temp1))
+					else:
+						return HttpResponse("errors %s"%(errors))
+					return HttpResponse(temp1, content_type="application/json")
+		return render(request,'temp.html', {'form':form,'run_count':run_count})
+
 
 def update_content(request):
 	if request.method=='post':
@@ -64,10 +123,10 @@ def update_content(request):
 		# return render(request,'index.html',{'form':form,'run_count':0})
 
 def index_id(request):
-	RUN_URL = u'https://api.hackerearth.com/v3/code/compile/'
+	RUN_URL = u'https://api.hackerearth.com/v3/code/run/'
 	CLIENT_SECRET = 'c8b23f340cc542d38f1786ee3d2180254e75a0f5'
 
-	source = "print 'Hello World'"
+	source = "print 'Hello World"
 
 	data = {
 	    'client_secret': CLIENT_SECRET,
