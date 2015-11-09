@@ -17,6 +17,7 @@ class Code(models.Model):
 	run_count = models.IntegerField(default=0)
 	file_name = models.CharField(max_length=50,default='Untitled File')
 	output = models.CharField(max_length=2400)
+	# inputEnter = models.TextField()
 
 	class Meta:
 		app_label = 'CodePage'

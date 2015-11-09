@@ -5,14 +5,14 @@
 
         {% load staticfiles %}
 
-       	<title>Sample CodePage</title>
+        <title>Sample CodePage</title>
 
-       	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
-       	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-       	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}">
-       	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script src="{% static 'js/bootstrap.js' %}"></script>
-		
+        
         <style>
 
             #editor {
@@ -40,39 +40,7 @@
 
         </style>   
 
-		<script>
-		$(document).ready(function(){
-
-            alert('rt');
-            function displayInput()
-            {
-                $("#inputEnter").show();
-                return false;
-            }
-           
-         
-            function form_post(){       
-                var datastring = $form.serialize();
-
-                $.ajax({  
-                  url: "/update-content/",  
-                  type: 'POST',
-                  data: datastring,
-                    success: function(response) {
-                        result = JSON.parse(response); 
-                        if (result.error) { 
-                            
-                            alert(result.error_text);
-                        } else {  // Success
-                                print "yes"
-                                //Here do whatever you need with the result;                                                  
-                            } 
-                        }
-                    }
-                });              
-            }
-        });
-        </script>
+        
         <script >
             $('#code-section').submit(function() { // catch the form's submit event
                 $.ajax({ // create an AJAX call...
@@ -89,8 +57,8 @@
                         else
                         {  
                                 print "yes"
-                                document.getElementById("output").innerHTML = data;
-                                $("#output").show();
+                                document.getElementById("output-ans").innerHTML = data;
+                                $("#output-ans").show();
                                                                              
                         } 
                     },
@@ -107,12 +75,16 @@
 
     <body>
 
-    	{% load front_tags %}
+        {% load front_tags %}
+        {{form.errors}}
+
+            "hi"
+        {{ form.non_field_errors }}
 
         <!-- header-->
-    	<div class="navbar navbar-inverse navbar-static-top">
-        	<div class="container">
-            	<a href="#" class="navbar-brand">Code Page</a>
+        <div class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <a href="#" class="navbar-brand">Code Page</a>
                 
                 <button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
                     <span class="icon-bar"></span>
@@ -121,8 +93,8 @@
                 </button>
                 
                 <div class="collapse navbar-collapse navHeaderCollapse">
-                	<ul class="nav navbar-nav navbar-right">
-                    	<li><a href="#">New Code</a></li>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">New Code</a></li>
                         <li><a href="https://github.com/HackerEarth/hackerearth.vim" target="_blank">Vim Plugin</a></li>
                     </ul>
                 </div>
@@ -133,35 +105,35 @@
         <div class="container" >
             <!-- FileName area -->
 
-        	<div>
-        	   
+            <div>
+               
                <div>
 
-        		<a class='file-name' id='file-name' onclick=" $('#filename-text').show();var x = document.getElementById('file-name').value;
+                <a class='file-name' id='file-name' onclick=" $('#filename-text').show();var x = document.getElementById('file-name').value;
                         $('#input_name').val(x);">
                     <!-- return name-change();return false; -->
                     <div class="float-left" title="Click to rename">
                         Untitled Page
-        		    </div>
+                    </div>
                 </a>
 
                 </div>
-		        
                 
-			    <div id="filename-text" class="filename-text" style="display:none">
+                
+                <div id="filename-text" class="filename-text" style="display:none">
                     <form> {% csrf_token %}
 
                         
                         <div class="floating-wrapper">
 
-			                    <input type="text" name="filename" id="input_name" value=""/>
-			                    <button id = "update-name" type="button" class="btn-primary" onclick="fn2()">Save</button>
+                                <input type="text" name="filename" id="input_name" value=""/>
+                                <button id = "update-name" type="button" class="btn-primary" onclick="fn2()">Save</button>
                                 
-			                    <a id="filename-cancel" onclick="fn()" >
+                                <a id="filename-cancel" onclick="fn()" >
                                     Cancel
                                 </a>
 
-			             </div>
+                         </div>
 
                          <script>
                             function fn2()
@@ -178,11 +150,11 @@
                             }
                         </script>
 
-			         </form>
-			     </div>
+                     </form>
+                 </div>
                 
 
-        	</div>
+            </div>
 
 
             <hr class="hr">
@@ -190,7 +162,7 @@
             <!-- Coding, language, save area -->
             <div id="code_area" style="width:80%; float:left" class="jumbotron">
 
-            	{% block content %}   
+                {% block content %}   
                 {% load wysiwyg %}
                 {% wysiwyg_setup %}  
 
@@ -215,41 +187,90 @@
                     <!-- code editor -->
                     <div id="editor" style="float:left;width:100%;height:400px;background-color:white">
 
-                        <div style="float:left;width:100%;height:400px;background-color:white" id="code">
-                            {{ form.code }}
+                        <div id="code1">
+                            cout"hello world!!"
                         </div>
 
                     </div>
                         
+
+                            {{ form.code }}
+                            <script type="text/javascript">
+                                $("#code").hide();
+                                $("#code").val("printf('hello world!!!');");
+                            </script>
                     <br>
                     <br>
                     <br>
                     
                     <div id ="enterInput" onclick="return displayInput();return false;"  >
-                        <input type="checkbox" name="input-yes" value="yes" onclick="fn3(); " > Standard Input
+                        <input type="checkbox" id="check" name="input-yes" value="yes" onclick="fn3(); " > Use Custom input for testing
                     </div>
                     <br>
                     <br>
                     <script type="text/javascript">
                         function fn3()
                         {
-                            $('#inputEnter').toggle();
+                            var c=document.getElementById('check');
+                            if(c.checked)
+                            {
+                                $('#inputEnter').show();
+                                
+                            }
+                            else
+                            {
+                                
+                                $('#inputEnter').hide();
+                                $("#input1").val('');
+                            }
+                            
                         }
                         
                     </script>
+
                     <div id="inputEnter" style="display:none">
-                        <textarea id="input" class="form-control">
+                        <textarea id="input1" class="form-control">
 
                         </textarea>
                     </div>
                     <br>
                     <br>
                     <!-- compile and run the code -->
-                    <button type="submit" class="save btn btn-success" style="float:right">Compile and Run</button>
+                    <button type="submit" class="save btn btn-success" style="float:right" >Compile and Run</button>
                         
                 </form>
+                <script type="text/javascript">
+                    $('code-section').submit(function(e){
+                    e.prevent_default(); 
+                    alert("nonono");  
+                        var code = $("#code").val();
+                        var lang = $("#lang option:selected").val();
+                        var input = $("input1").val();
+                        // var csrftoken = getCookie('csrftoken');
 
-                <!-- {% wysiwyg_editor "code" %} -->
+                        $.ajax({  
+                          url: "/",  
+                          type: 'POST',
+                          data: { code: code, lan: lang, input1:input1},
+                            success: function(response) {
+                                result = JSON.parse(response); 
+                                if (result.error) { 
+                                    
+                                    alert(result.error_text);
+                                } else {  // Success
+                                        $("#output").show();
+                                        document.getElementById('output-ans').innerHTML=result;
+                                        print "yes"
+                                        //Here do whatever you need with the result;                                                  
+                                    } 
+                                }
+                            }
+                        });              
+                    }
+                });
+        
+                </script>
+                
                      
                 {% endblock %}
             </div>
@@ -263,14 +284,16 @@
 
             
 
-            <div id="output" style="float:left;width:80%">
+            <div id="output" style="float:left;width:80%;display:none">
                 <b>
                    <font style="color:black">
                         Output
                     </font>
                 </b>
                 <hr>
+                <div id="output-ans">
                 output
+                </div>
                 <br>
                 <br>
                 <b>
@@ -287,14 +310,45 @@
         <script src="{% static 'ace-builds-master/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
         <!-- Ace Editor is loaded because of this-->
         <script>
-            var editor = ace.edit("code");
+            var editor = ace.edit("code1");
             editor.setTheme("ace/theme/default");
-            editor.session.setMode("ace/mode/python");
+            editor.session.setMode("ace/mode/ccpp");
             editor.setOptions({
                 maxLines: 30
             
             });
+            var textarea = $('#code').hide();
+            editor.getSession().setValue(textarea.val());
+            editor.getSession().on('change', function(){
+              textarea.val(editor.getSession().getValue());
+            });
 
+            $('#lang').on('change', function(){
+                
+                var newMode = $("#lang option:selected").val();
+                if (newMode =="C" )
+                {
+                    editor.getSession().setMode("ace/mode/ccpp");
+                    var text = "printf('Hello World!!')";
+                    editor.getSession().setValue(text);
+                }
+                else if(newMode =="CPP")  
+                {
+                    editor.getSession().setMode("ace/mode/ccpp");
+                    var text = "cout << 'hello world'";
+                    editor.getSession().setValue(text);
+                }
+                else if(newMode=="PYTHON")
+                {
+                    editor.getSession().setMode("ace/mode/python");
+                    var text = "print 'hello world'";
+                    editor.getSession().setValue(text);
+                }
+                else
+                {
+                    editor.session().setMode("ace/mode/ccpp");
+                }
+                });
         </script>
 
         {% front_edit_scripts %}

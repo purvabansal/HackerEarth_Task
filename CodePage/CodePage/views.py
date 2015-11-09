@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, render_to_response
 from django.template import Context, loader
 import json
+
 import requests
 from forms import CodeForm, Code
 from django_ace import AceWidget
@@ -19,17 +20,14 @@ def index(request):
 	if len(request.POST)==0:
 		return render(request,'temp.html', {'form':form,'run_count':run_count})
 	else:
-
-		form = CodeForm(request.POST)
-
+		print "yoyo"
+		form = CodeForm(request.POST or None)
 		if form.is_valid():
-
-				source = request.POST['code']
-				lang = request.POST['lang']
+			if request.is_ajax():
+				source = request.POST.get('code','')
+				lang = request.POST.get('lang','C')
 				time = datetime.now()
-				print "yoyooyoy"
-				print request.POST['code']
-				print "dsfdsfgd"
+				input1 = request.POST.get('input1','')
 				instance1, instance2 = Code.objects.get_or_create(id1=id_code)
 	        	
 				if instance2:
@@ -59,6 +57,7 @@ def index(request):
 				    'lang': lang,
 				    'time_limit': 5,
 				    'memory_limit': 262144,
+				    'input': input1,
 				}
 
 				r = requests.post(COMPILE_URL, data=data)
@@ -66,13 +65,6 @@ def index(request):
 
 				compile_status = temp['compile_status']
 
-				print temp
-
-				print compile_status
-
-				print source
-
-				print lang
 				if lang != 'PYTHON' :
 					print "hehe"
 					if compile_status == 'OK':
@@ -81,24 +73,24 @@ def index(request):
 						print temp1
 						errors = temp1["errors"]
 						if not errors:
-							return HttpResponse("compiled ad runned successfully %s"%(temp1))
+							return JsonResponse(temp1)
 						else:
-							return HttpResponse("errors %s"%(errors))
-						return HttpResponse(simplejson.dumps(temp1))
+							return JsonResponse(errors)
+						return JsonResponse(json.dumps(temp1))
 
 					else:
 						return HttpResponse("compile error %s"%(compile_status))
 				else:
-					print "yoyo"
 					r = requests.post(RUN_URL, data=data)
 					temp1 = r.json()
 					errors = temp1["compile_status"]
 					if compile_status == 'OK':
-						return HttpResponse(simplejson.dumps(temp1))
+						return HttpResponse(json.dumps(temp1))
 					else:
-						return HttpResponse("errors %s"%(errors))
-					return HttpResponse(temp1, content_type="application/json")
-		return render(request,'temp.html', {'form':form,'run_count':run_count})
+						return JsonResponse(errors)
+			return render(request,'yolo', {'form':form,'run_count':run_count})
+					
+		return render(request,'nono', {'form':form,'run_count':run_count})
 
 
 def update_content(request):

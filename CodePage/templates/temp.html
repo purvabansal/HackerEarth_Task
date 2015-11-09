@@ -40,69 +40,8 @@
 
         </style>   
 
-		<script>
-		$(document).ready(function(){
-
-            alert('rt');
-            function displayInput()
-            {
-                $("#inputEnter").show();
-                return false;
-            }
+		
            
-         
-            function form_post(){       
-                var datastring = $form.serialize();
-
-                $.ajax({  
-                  url: "/update-content/",  
-                  type: 'POST',
-                  data: datastring,
-                    success: function(response) {
-                        result = JSON.parse(response); 
-                        if (result.error) { 
-                            
-                            alert(result.error_text);
-                        } else {  // Success
-                                print "yes"
-                                //Here do whatever you need with the result;                                                  
-                            } 
-                        }
-                    }
-                });              
-            }
-        });
-        </script>
-        <script >
-            $('#code-section').submit(function() { // catch the form's submit event
-                $.ajax({ // create an AJAX call...
-                    data: $(this).serialize(), // get the form data
-                    type: $(this).attr('method'), // GET or POST
-                    url: $(this).attr('action'), // the file to call
-                    success: function(response) { // on success..
-                        // $('#success_div).html(response); // update the DIV
-                        result = JSON.parse(response); 
-                        if (result.error)
-                        { 
-                            alert(result.error_text);
-                        }
-                        else
-                        {  
-                                print "yes"
-                                document.getElementById("output-ans").innerHTML = data;
-                                $("#output-ans").show();
-                                                                             
-                        } 
-                    },
-                    error: function(e, x, r) { // on error..
-                        // $('#error_div').html(e); // update the DIV
-
-                    }
-                });
-                return false;
-            });
-        </script>
-    
     </head>
 
     <body>
@@ -110,7 +49,7 @@
     	{% load front_tags %}
         {{form.errors}}
 
-        hi
+            "hi"
         {{ form.non_field_errors }}
 
         <!-- header-->
@@ -219,40 +158,120 @@
                     <!-- code editor -->
                     <div id="editor" style="float:left;width:100%;height:400px;background-color:white">
 
-                        <div id="code">
-                            {{ form.code }}
+                        <div id="code1">
+                            cout"hello world!!"
                         </div>
 
                     </div>
                         
+
+                            {{ form.code }}
+                            <script type="text/javascript">
+                                $("#code").hide();
+                                $("#code").val("printf('hello world!!!');");
+                            </script>
                     <br>
                     <br>
                     <br>
                     
                     <div id ="enterInput" onclick="return displayInput();return false;"  >
-                        <input type="checkbox" name="input-yes" value="yes" onclick="fn3(); " > Standard Input
+                        <input type="checkbox" id="check" name="input-yes" value="yes" onclick="fn3(); " > Use Custom input for testing
                     </div>
                     <br>
                     <br>
                     <script type="text/javascript">
                         function fn3()
                         {
-                            $('#inputEnter').toggle();
+                            var c=document.getElementById('check');
+                            if(c.checked)
+                            {
+                                $('#inputEnter').show();
+                                
+                            }
+                            else
+                            {
+                                
+                                $('#inputEnter').hide();
+                                $("#input1").val('');
+                            }
+                            
                         }
                         
                     </script>
+
                     <div id="inputEnter" style="display:none">
-                        <textarea id="input" class="form-control">
+                        <textarea id="input1" class="form-control">
 
                         </textarea>
                     </div>
                     <br>
                     <br>
                     <!-- compile and run the code -->
-                    <button type="submit" class="save btn btn-success" style="float:right" on>Compile and Run</button>
+                    <button type="submit" class="save btn btn-success" style="float:right" onclick="fn4()">Compile and Run</button>
                         
                 </form>
+                <script type="text/javascript">
+                    function fn()
+                    {
+                        alert("nonoon");
+                        alert("nonono");  
+                        var code = $("#code").val();
+                        var lang = $("#lang option:selected").val();
+                        var input = $("input1").val();
+                        // var csrftoken = getCookie('csrftoken');
 
+                        $.ajax({  
+                          url: "/",  
+                          type: 'POST',
+                          data: { code: code, lan: lang, input1:input1},
+                            success: function(response) {
+                                result = JSON.parse(response); 
+                                if (result.error) { 
+                                    
+                                    alert(result.error_text);
+                                } else {  // Success
+                                        $("#output").show();
+                                        document.getElementById('output-ans').innerHTML=result;
+                                        print "yes"
+                                        //Here do whatever you need with the result;                                                  
+                                    } 
+                                }
+                            }
+                        });            
+                    }
+                </script>
+                <script type="text/javascript">
+                    $('code-section').submit(function(e){
+                        alert("nonoon");
+                        e.preventDefault(); 
+                        alert("nonono");  
+                        var code = $("#code").val();
+                        var lang = $("#lang option:selected").val();
+                        var input = $("input1").val();
+                        // var csrftoken = getCookie('csrftoken');
+
+                        $.ajax({  
+                          url: "/",  
+                          type: 'POST',
+                          data: { code: code, lan: lang, input1:input1},
+                            success: function(response) {
+                                result = JSON.parse(response); 
+                                if (result.error) { 
+                                    
+                                    alert(result.error_text);
+                                } else {  // Success
+                                        $("#output").show();
+                                        document.getElementById('output-ans').innerHTML=result;
+                                        print "yes"
+                                        //Here do whatever you need with the result;                                                  
+                                    } 
+                                }
+                            }
+                        });              
+                   
+                    });
+        
+                </script>
                 
                      
                 {% endblock %}
@@ -267,7 +286,7 @@
 
             
 
-            <div id="output" style="float:left;width:80%">
+            <div id="output" style="float:left;width:80%;display:none">
                 <b>
                    <font style="color:black">
                         Output
@@ -293,19 +312,45 @@
         <script src="{% static 'ace-builds-master/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
         <!-- Ace Editor is loaded because of this-->
         <script>
-            var editor = ace.edit("code");
+            var editor = ace.edit("code1");
             editor.setTheme("ace/theme/default");
-            editor.session.setMode("ace/mode/python");
+            editor.session.setMode("ace/mode/ccpp");
             editor.setOptions({
                 maxLines: 30
             
             });
-            var textarea = $('textarea[name="description"]').hide();
+            var textarea = $('#code').hide();
             editor.getSession().setValue(textarea.val());
             editor.getSession().on('change', function(){
               textarea.val(editor.getSession().getValue());
             });
 
+            $('#lang').on('change', function(){
+                
+                var newMode = $("#lang option:selected").val();
+                if (newMode =="C" )
+                {
+                    editor.getSession().setMode("ace/mode/ccpp");
+                    var text = "printf('Hello World!!')";
+                    editor.getSession().setValue(text);
+                }
+                else if(newMode =="CPP")  
+                {
+                    editor.getSession().setMode("ace/mode/ccpp");
+                    var text = "cout << 'hello world'";
+                    editor.getSession().setValue(text);
+                }
+                else if(newMode=="PYTHON")
+                {
+                    editor.getSession().setMode("ace/mode/python");
+                    var text = "print 'hello world'";
+                    editor.getSession().setValue(text);
+                }
+                else
+                {
+                    editor.session().setMode("ace/mode/ccpp");
+                }
+                });
         </script>
 
         {% front_edit_scripts %}
