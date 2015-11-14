@@ -49,7 +49,7 @@
     	{% load front_tags %}
         {{form.errors}}
 
-            "hi"
+            
         {{ form.non_field_errors }}
 
         <!-- header-->
@@ -158,8 +158,7 @@
                     <!-- code editor -->
                     <div id="editor" style="float:left;width:100%;height:400px;background-color:white">
 
-                        <div id="code1">
-                            cout"hello world!!"
+                        <div id="code1">printf("hello world!!!");
                         </div>
 
                     </div>
@@ -168,8 +167,7 @@
                             {{ form.code }}
                             <script type="text/javascript">
                                 $("#code").hide();
-                                $("#code").val("printf('hello world!!!');");
-                            </script>
+                                $("#code").val("printf('hello world!!!');");</script>
                     <br>
                     <br>
                     <br>
@@ -206,15 +204,36 @@
                     </div>
                     <br>
                     <br>
+                    {% csrf_token %}
                     <!-- compile and run the code -->
-                    <button type="submit" class="save btn btn-success" style="float:right" onclick="fn4()">Compile and Run</button>
+                    <button type="submit" class="save btn btn-success" style="float:right" onclick=" alert('hihihi'); var code = $('#code').val();
+                        var lang = $('#lang option:selected').val();
+                        var input = $('input1').val();
+                        // var csrftoken = getCookie('csrftoken');
+
+                        $.ajax({  
+                          url: '/',  
+                          type: 'POST',
+                          data: { 'csrfmiddlewaretoken': '{{ csrf_token }}',code: code, lan: lang, input1:input1},
+                            success: function(response) {
+                                result = JSON.parse(response); 
+                                if (result.error) { 
+                                    
+                                    alert(result.error_text);
+                                } else {  // Success
+                                        $('#output').show();
+                                        document.getElementById('output-ans').innerHTML=result;
+                                        print 'yes';
+                                        //Here do whatever you need with the result;                                                  
+                                    } 
+                                }
+                            }
+                        });            ">Compile and Run</button>
                         
                 </form>
                 <script type="text/javascript">
-                    function fn()
+                    function fn4()
                     {
-                        alert("nonoon");
-                        alert("nonono");  
                         var code = $("#code").val();
                         var lang = $("#lang option:selected").val();
                         var input = $("input1").val();
@@ -241,35 +260,36 @@
                     }
                 </script>
                 <script type="text/javascript">
-                    $('code-section').submit(function(e){
-                        alert("nonoon");
-                        e.preventDefault(); 
-                        alert("nonono");  
-                        var code = $("#code").val();
-                        var lang = $("#lang option:selected").val();
-                        var input = $("input1").val();
-                        // var csrftoken = getCookie('csrftoken');
+                    // $('code-section').submit(function(e){
+                    //     alert("nonoon");
+                    //     e.preventDefault(); 
+                    //     alert("nonono");  
+                    //     var code = $("#code").val();
+                    //     var lang = $("#lang option:selected").val();
+                    //     var input = $("input1").val();
+                    //     // var csrftoken = getCookie('csrftoken');
 
-                        $.ajax({  
-                          url: "/",  
-                          type: 'POST',
-                          data: { code: code, lan: lang, input1:input1},
-                            success: function(response) {
-                                result = JSON.parse(response); 
-                                if (result.error) { 
+                    //     $.ajax({  
+                    //       url: "/",  
+                    //       type: 'POST',
+                    //       data: { code: code, lan: lang, input1:input1},
+                    //         success: function(response) {
+                    //             result = JSON.parse(response); 
+                    //             if (result.error) { 
                                     
-                                    alert(result.error_text);
-                                } else {  // Success
-                                        $("#output").show();
-                                        document.getElementById('output-ans').innerHTML=result;
-                                        print "yes"
-                                        //Here do whatever you need with the result;                                                  
-                                    } 
-                                }
-                            }
-                        });              
+                    //                 alert(result.error_text);
+                    //             } else {  // Success
+                    //                 alert("hello");
+                    //                     $("#output").show();
+                    //                     document.getElementById('output-ans').innerHTML=result;
+                    //                     print "yes"
+                                                                                        
+                    //                 } 
+                    //             }
+                    //         }
+                    //     });              
                    
-                    });
+                    // });
         
                 </script>
                 

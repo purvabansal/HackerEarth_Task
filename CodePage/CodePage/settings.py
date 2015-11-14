@@ -44,7 +44,6 @@ INSTALLED_APPS = (
     'CodePage',
     'front',
     'django_wysiwyg',
-    'ckeditor',
     'south',
     'django_ace',
 )

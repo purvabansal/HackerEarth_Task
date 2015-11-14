@@ -1,0 +1,5 @@
+south
+
+front
+django_wysiwyg
+django_ace

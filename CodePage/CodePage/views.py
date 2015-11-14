@@ -20,7 +20,7 @@ def index(request):
 	if len(request.POST)==0:
 		return render(request,'temp.html', {'form':form,'run_count':run_count})
 	else:
-		print "yoyo"
+		
 		form = CodeForm(request.POST or None)
 		if form.is_valid():
 			if request.is_ajax():
@@ -73,21 +73,21 @@ def index(request):
 						print temp1
 						errors = temp1["errors"]
 						if not errors:
-							return JsonResponse(temp1)
+							return HttpResponse(json.dumps(temp1), content_type="application/json")
 						else:
-							return JsonResponse(errors)
-						return JsonResponse(json.dumps(temp1))
+							return HttpResponse(json.dumps(errors), content_type="application/json")
+						return HttpResponse(json.dumps(temp1), content_type="application/json")
 
 					else:
-						return HttpResponse("compile error %s"%(compile_status))
+						return HttpResponse(json.dumps(compile_status), content_type="application/json")
 				else:
 					r = requests.post(RUN_URL, data=data)
 					temp1 = r.json()
 					errors = temp1["compile_status"]
 					if compile_status == 'OK':
-						return HttpResponse(json.dumps(temp1))
+						return HttpResponse(json.dumps(temp1), content_type="application/json")
 					else:
-						return JsonResponse(errors)
+						return HttpResponse(json.dumps(errors), content_type="application/json")
 			return render(request,'yolo', {'form':form,'run_count':run_count})
 					
 		return render(request,'nono', {'form':form,'run_count':run_count})
