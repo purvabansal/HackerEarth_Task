@@ -42,9 +42,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'CodePage',
-    'front',
     'django_wysiwyg',
-    'south',
     'django_ace',
 )
 

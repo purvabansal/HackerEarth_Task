@@ -1,5 +1,4 @@
-south
-
-front
+requests
+six
 django_wysiwyg
 django_ace

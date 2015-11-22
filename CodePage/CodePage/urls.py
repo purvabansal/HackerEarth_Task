@@ -8,9 +8,6 @@ urlpatterns = patterns('',
     # url(r'^$', 'CodePage.views.home', name='home'),
     
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^front-edit/', include('front.urls')),
-    url(r'^index_id','CodePage.views.index_id'),
-    url(r'^update-content','CodePage.views.update_content'),
     url(r'^','CodePage.views.index'),
 
 )

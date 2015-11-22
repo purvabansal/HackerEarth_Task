@@ -18,7 +18,7 @@ def index(request):
 	lang="C"
 	time = datetime.now()
 	if len(request.POST)==0:
-		return render(request,'temp.html', {'form':form,'run_count':run_count})
+		return render(request,'index.html', {'form':form,'run_count':run_count})
 	else:
 		
 		form = CodeForm(request.POST or None)
@@ -88,46 +88,8 @@ def index(request):
 						return HttpResponse(json.dumps(temp1), content_type="application/json")
 					else:
 						return HttpResponse(json.dumps(errors), content_type="application/json")
-			return render(request,'yolo', {'form':form,'run_count':run_count})
+			return render(request,'Not able to render with ajax request??', {'form':form,'run_count':run_count})
 					
-		return render(request,'nono', {'form':form,'run_count':run_count})
+		return render(request,'error in page calling', {'form':form,'run_count':run_count})
 
 
-def update_content(request):
-	if request.method=='post':
-		RUN_URL = u'https://api.hackerearth.com/v3/code/compile/'
-		CLIENT_SECRET = 'c8b23f340cc542d38f1786ee3d2180254e75a0f5'
-
-		source = request.POST['code']
-
-		data = {
-		    'client_secret': CLIENT_SECRET,
-		    'async': 0,
-		    'source': source,
-		    'lang': request.POST['lang'],
-		    'time_limit': 5,
-		    'memory_limit': 262144,
-		}
-
-		r = requests.post(RUN_URL, data=data)
-		print r
-		return render(request,"hi")
-		# return render(request,'index.html',{'form':form,'run_count':0})
-
-def index_id(request):
-	RUN_URL = u'https://api.hackerearth.com/v3/code/run/'
-	CLIENT_SECRET = 'c8b23f340cc542d38f1786ee3d2180254e75a0f5'
-
-	source = "print 'Hello World"
-
-	data = {
-	    'client_secret': CLIENT_SECRET,
-	    'async': 0,
-	    'source': source,
-	    'lang': "PYTHON",
-	    'time_limit': 5,
-	    'memory_limit': 262144,
-	}
-
-	r = requests.post(RUN_URL, data=data)
-	print r.json()
